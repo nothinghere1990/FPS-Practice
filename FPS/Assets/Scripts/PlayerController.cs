@@ -198,7 +198,10 @@ public class PlayerController : MonoBehaviour
         
         allGuns[selectedGun].muzzleFlash.SetActive(true);
         allGuns[selectedGun].muzzleFlash.transform.rotation = Quaternion.Euler(Random.Range(0, 361) * Vector3.right);
-        allGuns[selectedGun].muzzleFlash.transform.localScale = Random.Range(0, 101) * Vector3.one;
+        if (allGuns[selectedGun].gameObject.name == "Sniper")
+            allGuns[selectedGun].muzzleFlash.transform.localScale = Random.Range(150, 300) * Vector3.one;
+        else
+            allGuns[selectedGun].muzzleFlash.transform.localScale = Random.Range(0, 101) * Vector3.one;
         muzzleCounter = muzzleDisplayTime;
     }
 
