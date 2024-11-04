@@ -50,6 +50,11 @@ public class PlayerController : MonoBehaviour
         UIController.instance.crosshair.SetActive(true);
         
         SwitchGun();
+        
+        //Spawn at random point.
+        Transform pointToSpawn = SpawnManager.instance.GetSpawnPoint();
+        transform.position = pointToSpawn.position;
+        transform.rotation = pointToSpawn.rotation;
     }
 
     void Update()
@@ -100,10 +105,7 @@ public class PlayerController : MonoBehaviour
 
         // Jump
         if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            Debug.Log("jump");
             movement.y = jumpForce;
-        }
 
         movement.y += Physics.gravity.y * Time.deltaTime * gravityMod;
 
@@ -148,7 +150,7 @@ public class PlayerController : MonoBehaviour
 
         UIController.instance.weaponTempSlider.value = heatCounter;
         
-        //Switch Gun
+        //Switch gun by mouse wheel.
         if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
         {
             selectedGun++;
@@ -162,6 +164,16 @@ public class PlayerController : MonoBehaviour
             if (selectedGun < 0) selectedGun = allGuns.Length - 1;
             
             SwitchGun();
+        }
+        
+        //Switch gun by number keys.
+        for (int i = 0; i < allGuns.Length; i++)
+        {
+            if (Input.GetKeyDown((i + 1).ToString()))
+            {
+                selectedGun = i;
+                SwitchGun();
+            }
         }
 
         // Show cursor.
