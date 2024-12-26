@@ -1,10 +1,11 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Photon.Pun;
 
 public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager instance;
-    
+
     public Transform[] spawnPoints;
 
     private void Awake()
