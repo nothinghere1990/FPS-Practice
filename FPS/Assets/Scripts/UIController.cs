@@ -11,6 +11,11 @@ public class UIController : MonoBehaviour
     public Slider weaponTempSlider;
     public GameObject crosshair;
 
+    public GameObject deathScreen;
+    public TMP_Text deathText;
+
+    public Slider healthSlider;
+
     private void Awake()
     {
         instance = this;

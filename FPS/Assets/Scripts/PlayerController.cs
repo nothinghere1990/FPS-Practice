@@ -39,6 +39,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public GameObject playerHitImpact;
 
+    public int maxHealth = 100;
+    private int currentHealth;
+
     void Start()
     {
         //Lock and hide mouse cursor position to center of the game screen.
@@ -53,7 +56,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
         UIController.instance.crosshair.SetActive(true);
         
         SwitchGun();
-        
+
+        currentHealth = maxHealth;
+
+        UIController.instance.healthSlider.maxValue = maxHealth;
+        UIController.instance.healthSlider.value = currentHealth;
         //Spawn at random point.
         //Transform pointToSpawn = SpawnManager.instance.GetSpawnPoint();
         //transform.position = pointToSpawn.position;
@@ -199,7 +206,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
                 PhotonNetwork.Instantiate(playerHitImpact.name, hit.point, Quaternion.identity);
                 print($"Hit {hit.collider.gameObject.GetPhotonView().Owner.NickName}");
 
-                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName);
+                hit.collider.gameObject.GetPhotonView().RPC("DealDamage", RpcTarget.All, photonView.Owner.NickName, allGuns[selectedGun].shotDamage);
             }
             else
             {
@@ -244,15 +251,26 @@ public class PlayerController : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DealDamage(string damager)
+    public void DealDamage(string damager, int damageAmount)
     {
+        TakeDamage(damager, damageAmount);
         print($"I've been hit by {damager}");
     }
 
-    public void TakeDamage(string damager)
+    public void TakeDamage(string damager, int damageAmount)
     {
-        gameObject.SetActive(false);
-        print($"{photonView.Owner.NickName} has been hit by {damager}");
+        if (photonView.IsMine) return;
+
+        currentHealth -= damageAmount;
+
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            PlayerSpawner.instance.Die(damager);
+        }
+
+        UIController.instance.healthSlider.value = currentHealth;
+        //print($"{photonView.Owner.NickName} has been hit by {damager}");
     }
 
     // Camera binds to view point.
